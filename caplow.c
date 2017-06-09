@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #define BUFF_SIZE 8
 
 char change_up_low(char c) {
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
 		int index = atoi(argv[2]);
 
 		for (int i = 0; i < count; i++) {
+				flock(fd_dev, LOCK_EX);
 				read(fd_dev, buff, BUFF_SIZE);
 				buff[BUFF_SIZE] = '\0';
 
@@ -55,8 +57,8 @@ int main(int argc, char *argv[])
 				//printf("%s\n", buff);
 
 				write(fd_dev, buff, BUFF_SIZE);
+				flock(fd_dev, LOCK_UN);
 		}
-
 		close(fd_dev);
 
 		return 0;

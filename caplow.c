@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#define CHAR_SIZE 1
 #define BUFF_SIZE 8
 
 char change_up_low(char c) {
@@ -20,11 +21,12 @@ char change_up_low(char c) {
 int main(int argc, char *argv[])
 {
 		int fd_dev, count;
-		char buff[BUFF_SIZE+1];
+		char buff[CHAR_SIZE+1];
+		char disp[BUFF_SIZE+1];
 
 		//check args
-		if (argc < 4) {
-				printf("Usage %s devfilename(absollute) index count\n", argv[0]);
+		if (argc < 3) {
+				printf("Usage %s devfilename(absollute) count\n", argv[0]);
 				return -1;
 		}
 
@@ -35,29 +37,27 @@ int main(int argc, char *argv[])
 				return -1;
 		}
 
-		count = atoi(argv[3]);
+		count = atoi(argv[2]);
 
 
 		if (count == 0){
-				read(fd_dev, buff, BUFF_SIZE);
-				buff[BUFF_SIZE] = '\0';
-				printf("%s\n", buff);
+				read(fd_dev, disp, 8);
+				disp[BUFF_SIZE] = '\0';
+				printf("%s\n", disp);
 				return 0;
 		}
 
-		int index = atoi(argv[2]);
-
 		for (int i = 0; i < count; i++) {
-				flock(fd_dev, LOCK_EX);
-				read(fd_dev, buff, BUFF_SIZE);
-				buff[BUFF_SIZE] = '\0';
+				//flock(fd_dev, LOCK_EX);
+				read(fd_dev, buff, CHAR_SIZE);
+				buff[CHAR_SIZE] = '\0';
 
 				//todo cap to small function
-				buff[index] = change_up_low(buff[index]);
+				buff[0] = change_up_low(buff[0]);
 				//printf("%s\n", buff);
 
-				write(fd_dev, buff, BUFF_SIZE);
-				flock(fd_dev, LOCK_UN);
+				write(fd_dev, buff, CHAR_SIZE);
+				//flock(fd_dev, LOCK_UN);
 		}
 		close(fd_dev);
 

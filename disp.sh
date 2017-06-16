@@ -1,4 +1,4 @@
 #!/bin/bash
 echo -------
-./caplow ~/hello_kmod/hello8 0;
+./caplow ~/hello_kmod/hello0 0;
 echo -------
